@@ -1,0 +1,11 @@
+# Test Values
+
+twitter:
+  oauth:
+    consumer_key: xvz1evFS4wEEPTGEFPHBog
+    nonce: kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg
+    signature: tnnArxj06cWHq44gCs1OSKk%2FjLY%3D
+    signature_method: HMAC-SHA1
+    timestamp: 1318622958
+    token: 370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb
+    version: 1.0

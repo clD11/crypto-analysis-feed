@@ -52,8 +52,18 @@ fn stream() {
     }))
 }
 
-fn create_headers() -> String{
-    return String::from("fail");
+fn create_headers() -> String {
+    let mut auth_header = String::from("OAuth ");
+    // 1. add each value
+    auth_header.push_str(r#"oauth_consumer_key="xvz1evFS4wEEPTGEFPHBog", "#);
+    auth_header.push_str(r#"oauth_nonce="kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg", "#);
+    auth_header.push_str(r#"oauth_signature="tnnArxj06cWHq44gCs1OSKk%2FjLY%3D", "#);
+    auth_header.push_str(r#"oauth_signature_method="HMAC-SHA1", "#);
+    auth_header.push_str(r#"oauth_timestamp="1318622958", "#);
+    auth_header.push_str(r#"oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb", "#);
+    auth_header.push_str(r#"oauth_version="1.0"#);
+
+    return String::from(auth_header);
 }
 
 #[cfg(test)]
@@ -62,15 +72,8 @@ mod tests {
 
     #[test]
     fn should_creat_valid_auth_headers() {
-        let expected = r#"OAuth oauth_consumer_key="xvz1evFS4wEEPTGEFPHBog",
-        oauth_nonce="kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
-        oauth_signature="tnnArxj06cWHq44gCs1OSKk%2FjLY%3D",
-        oauth_signature_method="HMAC-SHA1", oauth_timestamp="1318622958",
-        oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb",
-        oauth_version="1.0"#;
-
+        let expected = r#"OAuth oauth_consumer_key="xvz1evFS4wEEPTGEFPHBog", oauth_nonce="kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg", oauth_signature="tnnArxj06cWHq44gCs1OSKk%2FjLY%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1318622958", oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb", oauth_version="1.0"#;
         let actual = create_headers();
-
         assert_eq!(actual, expected);
     }
 
