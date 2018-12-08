@@ -1,10 +1,10 @@
-mod core;
+mod http;
 
-use core::client;
-use core::server;
+use http::client;
+use http::server;
 
 fn main() {
     println!("making request");
-    client::init_client();
+    client::process_tweets();
     //server::init();
 }
