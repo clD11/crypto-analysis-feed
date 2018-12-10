@@ -62,8 +62,8 @@ fn create_headers() -> String {
     auth_header.push_str(r#"oauth_timestamp="1318622958", "#);
     auth_header.push_str(r#"oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb", "#);
     auth_header.push_str(r#"oauth_version="1.0"#);
-
-    return String::from(auth_header);
+    
+    String::from(auth_header)
 }
 
 #[cfg(test)]

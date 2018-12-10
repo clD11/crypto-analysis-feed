@@ -24,16 +24,14 @@ pub fn create_signature(key: &str, msg: &str) -> String {
     hmac_sha1.input(msg.as_bytes());
 
     // move to static or singleton when know how!
-    let config = base64::Config::new(
+    let config = base64::Config::new (
         base64::CharacterSet::Standard,
         true,
         true,
         base64::LineWrap::NoWrap
     );
 
-    let encoded = base64::encode_config(&hmac_sha1.result().code(), config);
-
-    return encoded;
+    base64::encode_config(&hmac_sha1.result().code(), config)
 }
 
 #[cfg(test)]
