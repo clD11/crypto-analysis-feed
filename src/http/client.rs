@@ -7,6 +7,16 @@ use self::hyper::Client;
 use self::hyper_tls::HttpsConnector;
 use self::hyper::rt::{self, Future, Stream};
 
+struct RequestParams {
+   oauth_consumer_key: String,
+   oauth_nonce: String,
+   oauth_signature: String,
+   oauth_signature_method: String,
+   oauth_timestamp: String,
+   oauth_token: String,
+   params: String
+} 
+
 pub fn process_tweets() {
     // 1. create auth headers
     let auth_header = create_headers();

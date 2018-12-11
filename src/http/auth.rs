@@ -8,17 +8,6 @@ use self::base64::encode_config;
 
 type HmacSha1 = Hmac<Sha1>;
 
-//struct RequestParams {
-//    oauth_consumer_key: String,
-//    oauth_nonce: String,
-//    oauth_signature
-//    oauth_signature_method
-//    oauth_timestamp
-//    oauth_token
-//    params
-//
-//}
-
 pub fn create_signature(key: &str, msg: &str) -> String {
     let mut hmac_sha1 = HmacSha1::new_varkey(key.as_bytes()).unwrap();
     hmac_sha1.input(msg.as_bytes());
