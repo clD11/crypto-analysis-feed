@@ -1,8 +1,5 @@
 extern crate hyper;
 extern crate hyper_tls;
-extern crate yaml_rust;
-
-use yaml_rust::{YamlLoader, YamlEmitter};
 
 use std::io::{self, Write};
 use std::fs;
@@ -10,30 +7,6 @@ use std::fs;
 use self::hyper::Client;
 use self::hyper_tls::HttpsConnector;
 use self::hyper::rt::{self, Future, Stream};
-
-struct ClientConfig {
-   oauth_consumer_key: String,
-   oauth_nonce: String,
-   oauth_signature_method: String,
-   oauth_token: String,
-} 
-
-impl ClientConfig {
-    fn new() -> ClientConfig {
-        let file_content = fs::read_to_string("config.yaml")
-            .expect("Cannot find config file");
-        
-        let docs = YamlLoader::load_from_str(&file_content).unwrap();
-        let twitter_oauth = &docs[0]["twitter"]["oauth"];
-
-        ClientConfig {
-            oauth_consumer_key: twitter_oauth["consumer_key"].as_str().unwrap().to_string(),
-            oauth_nonce: twitter_oauth["oauth_nonce"].as_str().unwrap().to_string(),
-            oauth_signature_method: twitter_oauth["oauth_signature_method"].as_str().unwrap().to_string(),
-            oauth_token: twitter_oauth["oauth_token"].as_str().unwrap().to_string()
-        }
-    }
-}
 
 pub fn process_tweets() {
     // 1. create auth headers

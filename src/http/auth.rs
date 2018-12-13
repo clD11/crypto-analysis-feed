@@ -8,6 +8,10 @@ use self::base64::encode_config;
 
 type HmacSha1 = Hmac<Sha1>;
 
+// HTTP Method 	POST
+// Base Url https://api.twitter.com/1.1/statuses/update.json
+// params raw
+
 pub fn create_signature(key: &str, msg: &str) -> String {
     let mut hmac_sha1 = HmacSha1::new_varkey(key.as_bytes()).unwrap();
     hmac_sha1.input(msg.as_bytes());
@@ -21,6 +25,11 @@ pub fn create_signature(key: &str, msg: &str) -> String {
     );
 
     base64::encode_config(&hmac_sha1.result().code(), config)
+}
+
+fn percent_encode(src: &str) {
+    let encoded = String::new();
+    
 }
 
 #[cfg(test)]
