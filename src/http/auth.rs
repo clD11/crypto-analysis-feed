@@ -27,24 +27,41 @@ pub fn create_signature(key: &str, msg: &str) -> String {
     base64::encode_config(&hmac_sha1.result().code(), config)
 }
 
-fn percent_encode(src: &str) {
-    let encoded = String::new();
-    
+pub fn percent_encode(src: &str) -> String {
+    let reserved_chars = "-.,~";  
+    let mut encoded = String::new();
+
+    for letter in src.chars() {
+        if letter.is_ascii_alphabetic() || 
+           letter.is_ascii_digit() || 
+           reserved_chars.find(letter) != None {
+               encoded.push(letter);
+        } else {
+
+        }
+    }
+
+    encoded
 }
 
 #[cfg(test)]
 mod tests {
-    use super::create_signature;
+    use super::*;
 
     #[test]
     fn should_return_correct_hash() {
         let key = "key";
         let msg = "The quick brown fox jumps over the lazy dog";
         let expected = String::from("3nybhbi3iqa8ino29wqQcBydtNk=");
-
         let actual = create_signature(key, msg);
-
         assert_eq!(actual, expected);
     }
 
+    #[test]
+    fn should_percent_encode_src_string() {
+        let src = "Cats + Dogs";
+        let expected = String::from("Cats%20%2B%20Dogs");
+        let actual = percent_encode(&src);        
+        assert_eq!(actual, expected);
+    }
 }

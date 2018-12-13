@@ -2,9 +2,12 @@
 extern crate lazy_static;
 extern crate yaml_rust;
 
-use yaml_rust::YamlLoader;
 use std::fs;
 use std::time::Instant;
+
+use yaml_rust::YamlLoader;
+
+mod http;
 
 #[derive(Debug)]
 struct OAuth {
