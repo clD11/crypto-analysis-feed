@@ -5,14 +5,33 @@ extern crate base64;
 use self::hmac::{Hmac, Mac};
 use self::sha1::Sha1;
 use self::base64::encode_config;
+use std::time::Instant;
+
+use OAuth;
 
 type HmacSha1 = Hmac<Sha1>;
 
-// HTTP Method 	POST
-// Base Url https://api.twitter.com/1.1/statuses/update.json
-// params raw
+pub fn create_signature(twitter_oauth: OAuth) -> String {
+    // 1. HTTP Method POST
+    // 2. Base Url https://api.twitter.com/1.1/statuses/update.json
+    // 3. params raw
 
-pub fn create_signature(key: &str, msg: &str) -> String {
+    let request_method = "POST";
+    let base_url = percent_encode("https://api.twitter.com/1.1/statuses/update.json");    
+    let parameters = String::new();   
+    parameters.push_str("oauth_consumer_key=");
+    parameters.push_str(&percent_encode(&twitter_oauth.consumer_key));    
+    parameters.push_str("oauth_nonce=");
+    parameters.push_str(&percent_encode(&twitter_oauth.nonce));    
+    parameters.push_str("oauth_signature_method=");
+    parameters.push_str(&percent_encode(&twitter_oauth.signature_method));    
+    parameters.push_str("oauth_timestamp=");
+    parameters.push_str(&percent_encode(&Instant::now().elapsed().as_secs().to_string()));
+    parameters.push_str("oauth_token=");
+    parameters.push_str(&percent_encode(&twitter_oauth.token));
+    parameters.push_str("oauth_version=");
+    parameters.push_str(&percent_encode(&twitter_oauth.version));
+
     let mut hmac_sha1 = HmacSha1::new_varkey(key.as_bytes()).unwrap();
     hmac_sha1.input(msg.as_bytes());
 

@@ -13,9 +13,9 @@ mod http;
 struct OAuth {
    consumer_key: String,
    nonce: String,
-   signature: String,
+   //signature: String,
    signature_method: String,
-   timestamp: u64,
+   //timestamp: u64,
    token: String,
    version: String
 }
@@ -36,9 +36,9 @@ lazy_static! {
             oauth: OAuth {
                 consumer_key: String::from(oauth["consumer_key"].as_str().unwrap()),
                 nonce: String::from(oauth["nonce"].as_str().unwrap()),
-                signature: String::from("test"),
+                //signature: String::from("test"),
                 signature_method: String::from(oauth["signature_method"].as_str().unwrap()),
-                timestamp: Instant::now().elapsed().as_secs(),
+                //timestamp: Instant::now().elapsed().as_secs(),
                 token: String::from(oauth["token"].as_str().unwrap()),
                 version: String::from("1.0")
             }
@@ -48,4 +48,6 @@ lazy_static! {
 
 fn main() {
     println!("twitter is {:#?}", TWITTER_CONFIG.oauth);
+    let signed_signature = http::auth::create_signature(TWITTER_CONFIG.oauth);
+    println!("signature is {}", signed_signature);
 }
