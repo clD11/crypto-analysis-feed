@@ -27,20 +27,19 @@ pub fn create_signature(key: &str, msg: &str) -> String {
     base64::encode_config(&hmac_sha1.result().code(), config)
 }
 
-pub fn percent_encode(src: &str) -> String {
-    let reserved_chars = "-.,~";  
+pub fn percent_encode(src: &str) -> String {  
     let mut encoded = String::new();
-
     for character in src.chars() {
-        if character.is_ascii_alphabetic() || character.is_ascii_digit() || reserved_chars.find(character) != None {
+        if character.is_alphabetic() || character.is_ascii_digit() || "-.,~".contains(character) {
             encoded.push(character);
         } else {
-            for c in character.to_string().as_bytes() {
-                encoded.push_str(&format!("%{:X}", c));
+            let mut bytes = vec![0; character.len_utf8()];
+            character.encode_utf8(&mut bytes);
+            for byte in bytes.iter() {
+                encoded.push_str(&format!("%{:X}", byte));
             }
         }
     }
-
     encoded
 }
 
@@ -58,7 +57,7 @@ mod tests {
     }
 
     #[test]
-    fn should_percent_encode_src_string() {
+    fn should_percent_encode_src_containing_ascii() {
         let src = "Cats + Dogs-.,~";
         let expected = String::from("Cats%20%2B%20Dogs-.,~");
         let actual = percent_encode(&src);        
@@ -66,10 +65,11 @@ mod tests {
     }
 
     #[test]
-    fn should_percent_encode_src_symbol1() {
-        let src = "☃";
-        let expected = String::from("%E2%98%83");
+    fn should_percent_encode_src_containing_unicode() {
+        let src = "Snowman☃©";
+        let expected = String::from("Snowman%E2%98%83%C2%A9");
         let actual = percent_encode(&src);
         assert_eq!(actual, expected);
     }
+
 }
