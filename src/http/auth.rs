@@ -35,7 +35,9 @@ pub fn percent_encode(src: &str) -> String {
         if character.is_ascii_alphabetic() || character.is_ascii_digit() || reserved_chars.find(character) != None {
             encoded.push(character);
         } else {
-            encoded.push('%');
+            for c in character.to_string().as_bytes() {
+                encoded.push_str(&format!("%{:X}", c));
+            }
         }
     }
 
@@ -57,17 +59,17 @@ mod tests {
 
     #[test]
     fn should_percent_encode_src_string() {
-        let src = "CatsDogs";
-        let expected = String::from("CatsDogs");
+        let src = "Cats + Dogs-.,~";
+        let expected = String::from("Cats%20%2B%20Dogs-.,~");
         let actual = percent_encode(&src);        
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn should_percent_encode_src_given_utf8() {
-        let src = "æ";
-        let expected = String::from("%E6");
-        let actual = percent_encode(&src);        
+    fn should_percent_encode_src_symbol1() {
+        let src = "☃";
+        let expected = String::from("%E2%98%83");
+        let actual = percent_encode(&src);
         assert_eq!(actual, expected);
     }
 }
