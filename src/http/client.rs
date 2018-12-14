@@ -10,7 +10,7 @@ use self::hyper::rt::{self, Future, Stream};
 
 pub fn process_tweets() {
     // 1. create auth headers
-    let auth_header = create_headers();
+    let auth_header = create_authorization_header();
 
     // 2. setup filters
     // 3. make stream request
@@ -53,7 +53,7 @@ fn stream() {
     }))
 }
 
-fn create_headers() -> String {
+fn create_authorization_header() -> String {
 
     //create sig, timestamp, tags
 
@@ -72,12 +72,12 @@ fn create_headers() -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::create_headers;
+    use super::*;
 
     #[test]
     fn should_creat_valid_auth_headers() {
         let expected = r#"OAuth oauth_consumer_key="xvz1evFS4wEEPTGEFPHBog", oauth_nonce="kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg", oauth_signature="tnnArxj06cWHq44gCs1OSKk%2FjLY%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1318622958", oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb", oauth_version="1.0"#;
-        let actual = create_headers();
+        let actual = create_authorization_header();
         assert_eq!(actual, expected);
     }
 

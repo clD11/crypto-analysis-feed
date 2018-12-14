@@ -1,9 +1,12 @@
 # Test Values
 
 twitter:
+  stream_track_params: "bitcoin,ether"
   oauth:
     consumer_key: xvz1evFS4wEEPTGEFPHBog
+    consumer_secret_key: test
     nonce: kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg
     signature_method: HMAC-SHA1
     token: 370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb
+    token_secret: "test"
     version: 1.0
