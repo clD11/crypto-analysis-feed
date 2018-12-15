@@ -10,8 +10,6 @@ use self::hyper::rt::{self, Future, Stream};
 
 pub fn process_tweets() {
     // 1. create auth headers
-    let auth_header = create_authorization_header();
-
     // 2. setup filters
     // 3. make stream request
 
@@ -53,32 +51,3 @@ fn stream() {
     }))
 }
 
-fn create_authorization_header() -> String {
-
-    //create sig, timestamp, tags
-
-    let mut auth_header = String::from("OAuth ");
-    // 1. add each value
-    auth_header.push_str(r#"oauth_consumer_key="xvz1evFS4wEEPTGEFPHBog", "#);
-    auth_header.push_str(r#"oauth_nonce="kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg", "#);
-    auth_header.push_str(r#"oauth_signature="tnnArxj06cWHq44gCs1OSKk%2FjLY%3D", "#);
-    auth_header.push_str(r#"oauth_signature_method="HMAC-SHA1", "#);
-    auth_header.push_str(r#"oauth_timestamp="1318622958", "#);
-    auth_header.push_str(r#"oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb", "#);
-    auth_header.push_str(r#"oauth_version="1.0"#);
-    
-    String::from(auth_header)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn should_creat_valid_auth_headers() {
-        let expected = r#"OAuth oauth_consumer_key="xvz1evFS4wEEPTGEFPHBog", oauth_nonce="kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg", oauth_signature="tnnArxj06cWHq44gCs1OSKk%2FjLY%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1318622958", oauth_token="370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb", oauth_version="1.0"#;
-        let actual = create_authorization_header();
-        assert_eq!(actual, expected);
-    }
-
-}

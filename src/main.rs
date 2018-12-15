@@ -50,6 +50,6 @@ lazy_static! {
 }
 
 fn main() {
-    let signed_signature = auth::create_signature(&TWITTER_CONFIG);
+    let signed_signature = auth::create_authorization_header(&TWITTER_CONFIG);
     println!("signature is {}", signed_signature);
 }
