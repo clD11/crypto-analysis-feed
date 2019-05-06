@@ -1,6 +1,7 @@
 mod http;
 
 use http::auth;
+use http::server;
 
 #[macro_use]
 extern crate lazy_static;
@@ -50,6 +51,7 @@ lazy_static! {
 }
 
 fn main() {
-    let signed_signature = auth::create_authorization_header(&TWITTER_CONFIG);
-    println!("signature is {}", signed_signature);
+//    let signed_signature = auth::create_authorization_header(&TWITTER_CONFIG);
+//    println!("signature is {}", signed_signature);
+    server::init();
 }
