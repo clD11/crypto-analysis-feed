@@ -83,22 +83,22 @@ mod tests {
         assert_eq!(actual, expected);
     }
 
-    // #[test]
-    // fn should_create_authorization_header() {
-    //     let twitter_config = 
-    //         TwitterConfig {
-    //             stream_track_params: String::from("random"),
-    //             oauth: OAuth {
-    //                 consumer_key: String::from("xvz1evFS4wEEPTGEFPHBog"),
-    //                 consumer_secret_key: String::from("test"),
-    //                 nonce: String::from("kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"),
-    //                 signature_method: String::from("HMAC-SHA1"),
-    //                 token: String::from("370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"),
-    //                 token_secret: String::from("test"),
-    //                 version: String::from("1.0")
-    //         }
-    //     };
-    //     let actual = create_authorization_header(&twitter_config);
-    // }
+//     #[test]
+//     fn should_create_authorization_header() {
+//         let twitter_config =
+//             TwitterConfig {
+//                 stream_track_params: String::from("random"),
+//                 oauth: OAuth {
+//                     consumer_key: String::from("xvz1evFS4wEEPTGEFPHBog"),
+//                     consumer_secret_key: String::from("test"),
+//                     nonce: String::from("kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"),
+//                     signature_method: String::from("HMAC-SHA1"),
+//                     token: String::from("370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"),
+//                     token_secret: String::from("test"),
+//                     version: String::from("1.0")
+//             }
+//         };
+//         let actual = create_authorization_header(&twitter_config);
+//     }
 
 }

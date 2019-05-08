@@ -1,7 +1,8 @@
-mod http;
+mod httpc;
 
-use http::auth;
-use http::server;
+use httpc::{auth, client};
+use httpc::server;
+use client::process_tweets;
 
 #[macro_use]
 extern crate lazy_static;
@@ -26,32 +27,47 @@ pub struct TwitterConfig {
     oauth: OAuth
 }
 
-lazy_static! {
-    static ref TWITTER_CONFIG: TwitterConfig = {
-
-        let file_content = fs::read_to_string("config.yaml")
-            .expect("Cannot find config file");            
-        let docs = YamlLoader::load_from_str(&file_content).unwrap();
-        let twitter = &docs[0]["twitter"];
-        let oauth = &twitter["oauth"];
-
-        TwitterConfig {
-            stream_track_params: String::from(twitter["stream_track_params"].as_str().unwrap()),
-            oauth: OAuth {
-                consumer_key: String::from(oauth["consumer_key"].as_str().unwrap()),
-                consumer_secret_key: String::from(oauth["consumer_secret_key"].as_str().unwrap()),
-                nonce: String::from(oauth["nonce"].as_str().unwrap()),
-                signature_method: String::from(oauth["signature_method"].as_str().unwrap()),
-                token: String::from(oauth["token"].as_str().unwrap()),
-                token_secret: String::from(oauth["token_secret"].as_str().unwrap()),
-                version: String::from("1.0")
-            }            
-        }
-    };
-}
+//lazy_static! {
+//    static ref TWITTER_CONFIG: TwitterConfig = {
+//        let file_content = fs::read_to_string("config.yaml").expect("Cannot find config file");
+//        let docs = YamlLoader::load_from_str(&file_content).unwrap();
+//        let twitter = &docs[0]["twitter"];
+//        let oauth = &twitter["oauth"];
+//
+//        TwitterConfig {
+//            stream_track_params: String::from(twitter["stream_track_params"].as_str().unwrap()),
+//            oauth: OAuth {
+//                consumer_key: String::from(oauth["consumer_key"].as_str().unwrap()),
+//                consumer_secret_key: String::from(oauth["consumer_secret_key"].as_str().unwrap()),
+//                nonce: String::from(oauth["nonce"].as_str().unwrap()),
+//                signature_method: String::from(oauth["signature_method"].as_str().unwrap()),
+//                token: String::from(oauth["token"].as_str().unwrap()),
+//                token_secret: String::from(oauth["token_secret"].as_str().unwrap()),
+//                version: String::from("1.0")
+//            }
+//        }
+//    };
+//}
 
 fn main() {
-//    let signed_signature = auth::create_authorization_header(&TWITTER_CONFIG);
-//    println!("signature is {}", signed_signature);
-    server::init();
+    let file_content = fs::read_to_string("config.yaml").expect("Cannot find config file");
+    let docs = YamlLoader::load_from_str(&file_content).unwrap();
+    let twitter = &docs[0]["twitter"];
+    let oauth = &twitter["oauth"];
+
+    let twitter_config = TwitterConfig {
+        stream_track_params: String::from(twitter["stream_track_params"].as_str().unwrap()),
+        oauth: OAuth {
+            consumer_key: String::from(oauth["consumer_key"].as_str().unwrap()),
+            consumer_secret_key: String::from(oauth["consumer_secret_key"].as_str().unwrap()),
+            nonce: String::from(oauth["nonce"].as_str().unwrap()),
+            signature_method: String::from(oauth["signature_method"].as_str().unwrap()),
+            token: String::from(oauth["token"].as_str().unwrap()),
+            token_secret: String::from(oauth["token_secret"].as_str().unwrap()),
+            version: String::from("1.0")
+        }
+    };
+
+    client::process_tweets(&twitter_config);
+    //let signed_signature = auth::create_authorization_header(&twitter_config);
 }

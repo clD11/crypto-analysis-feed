@@ -7,26 +7,25 @@ use std::fs;
 use self::hyper::Client;
 use self::hyper_tls::HttpsConnector;
 use self::hyper::rt::{self, Future, Stream};
+use httpc::auth::create_authorization_header;
+use TwitterConfig;
+use self::hyper::{Method, Request};
+use http::{Request, Response};
 
-pub fn process_tweets() {
-    // 1. create auth headers
-    // 2. setup filters
-    // 3. make stream request
-
-}
-
-// temp refactor
-fn stream() {
+pub fn process_tweets(twitter_config: &TwitterConfig) {
     rt::run(rt::lazy(|| {
+        // 1. create auth headers
+        let auth_header = create_authorization_header(&twitter_config);
+
+        // 2. setup filters
+
+        // 3. make stream request
         let https = hyper_tls::HttpsConnector::new(4).unwrap();
-        let client = hyper::Client::builder()
-            .build::<_, hyper::Body>(https);
+        let client = hyper::Client::builder().build::<_, _>(https);
 
-        let uri = "https://hyper.rs".parse().unwrap();
+        let uri = "https://stream.twitter.com/1.1/statuses/filter.json?track=bitcoin,ether".parse().unwrap();
 
-        client
-            // Fetch the url...
-            .get(uri)
+        client.request(req)
             // And then, if we get a response back...
             .and_then(|res| {
                 println!("Response: {}", res.status());
@@ -48,6 +47,6 @@ fn stream() {
             .map_err(|err| {
                 eprintln!("Error {}", err);
             })
-    }))
+    }));
 }
 
