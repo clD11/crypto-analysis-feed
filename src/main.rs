@@ -1,8 +1,8 @@
-mod httpc;
+mod core;
 
-use httpc::{auth, client};
-use httpc::server;
-use client::process_tweets;
+use core::{auth, twitclient};
+use core::server;
+use core::twitclient::process_tweets;
 
 #[macro_use]
 extern crate lazy_static;
@@ -14,7 +14,7 @@ use yaml_rust::YamlLoader;
 #[derive(Debug)]
 struct OAuth {
    consumer_key: String,
-   consumer_secret_key: String,
+   consumer_secret: String,
    nonce: String,
    signature_method: String,
    token: String,
@@ -38,7 +38,7 @@ pub struct TwitterConfig {
 //            stream_track_params: String::from(twitter["stream_track_params"].as_str().unwrap()),
 //            oauth: OAuth {
 //                consumer_key: String::from(oauth["consumer_key"].as_str().unwrap()),
-//                consumer_secret_key: String::from(oauth["consumer_secret_key"].as_str().unwrap()),
+//                consumer_secret: String::from(oauth["consumer_secret"].as_str().unwrap()),
 //                nonce: String::from(oauth["nonce"].as_str().unwrap()),
 //                signature_method: String::from(oauth["signature_method"].as_str().unwrap()),
 //                token: String::from(oauth["token"].as_str().unwrap()),
@@ -59,7 +59,7 @@ fn main() {
         stream_track_params: String::from(twitter["stream_track_params"].as_str().unwrap()),
         oauth: OAuth {
             consumer_key: String::from(oauth["consumer_key"].as_str().unwrap()),
-            consumer_secret_key: String::from(oauth["consumer_secret_key"].as_str().unwrap()),
+            consumer_secret: String::from(oauth["consumer_secret_key"].as_str().unwrap()),
             nonce: String::from(oauth["nonce"].as_str().unwrap()),
             signature_method: String::from(oauth["signature_method"].as_str().unwrap()),
             token: String::from(oauth["token"].as_str().unwrap()),
@@ -68,6 +68,6 @@ fn main() {
         }
     };
 
-    client::process_tweets(&twitter_config);
+    core::twitclient::process_tweets(&twitter_config);
     //let signed_signature = auth::create_authorization_header(&twitter_config);
 }
