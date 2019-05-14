@@ -1,12 +1,9 @@
 extern crate hyper;
 extern crate hyper_tls;
-extern crate http;
 
 use std::io::{self, Write};
 use std::fs;
-//use http::header::HeaderMap;
 
-//use self::hyper::Client;
 use self::hyper_tls::HttpsConnector;
 use self::hyper::rt::{self, Future, Stream};
 use self::hyper::{Client, Method, Request, Response};
