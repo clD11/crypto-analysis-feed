@@ -32,7 +32,7 @@ pub fn create_authorization_header(twitter_oauth: &TwitterConfig) -> String {
     authorization_header
 }
 
-fn percent_encode(src: &str) -> String {  
+fn percent_encode(src: &str) -> String {
     let mut encoded = String::new();
     for character in src.chars() {
         if character.is_alphabetic() || character.is_ascii_digit() || "-._~".contains(character) {
@@ -53,7 +53,7 @@ fn collect_parameters(twitter_oauth: &TwitterConfig) -> String {
     let oauth_consumer_key = format!("oauth_consumer_key={}", percent_encode(&twitter_oauth.oauth.consumer_key));
     let oauth_nonce = format!("oauth_nonce={}", percent_encode(&twitter_oauth.oauth.nonce));
     let oauth_signature_method = format!("oauth_signature_method={}", percent_encode(&twitter_oauth.oauth.signature_method));
-    let oauth_timestamp = format!("oauth_timestamp={}", percent_encode(&Instant::now().elapsed().as_secs().to_string())); //percent_encode(&Instant::now().elapsed().as_secs().to_string()));
+    let oauth_timestamp = format!("oauth_timestamp={}", "1318622958"); //percent_encode(&Instant::now().elapsed().as_secs().to_string()));
     let oauth_token = format!("oauth_token={}", percent_encode(&twitter_oauth.oauth.token));
     let oauth_version = format!("oauth_version={}", percent_encode(&twitter_oauth.oauth.version));
 
@@ -90,7 +90,7 @@ fn sign(twitter_config: &TwitterConfig) -> String {
 }
 
 #[cfg(test)]
-mod tests {    
+mod tests {
     use super::*;
 
     #[test]
@@ -121,8 +121,8 @@ mod tests {
         let config = base64::Config::new (
             base64::CharacterSet::Standard,
             true,
-        true,
-        base64::LineWrap::NoWrap
+            true,
+            base64::LineWrap::NoWrap
         );
 
         let actual = base64::encode_config(&signature, config);

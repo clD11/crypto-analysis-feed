@@ -7,9 +7,12 @@ use core::twitclient::process_tweets;
 #[macro_use]
 extern crate lazy_static;
 extern crate yaml_rust;
+extern crate twitter_stream;
 
 use std::fs;
 use yaml_rust::YamlLoader;
+use twitter_stream::{Token, TwitterStreamBuilder};
+use twitter_stream::rt::{self, Future, Stream};
 
 #[derive(Debug)]
 struct OAuth {
@@ -71,5 +74,23 @@ fn main() {
             version: String::from("1.0")
         }
     };
-    core::twitclient::process_tweets(&twitter_config);
+
+    let token = Token::new(
+        twitter_config.oauth.consumer_key,
+        twitter_config.oauth.consumer_secret,
+        twitter_config.oauth.token,
+        twitter_config.oauth.token_secret);
+
+    let future = TwitterStreamBuilder::filter(&token)
+        .track(Some("bitcoin May 15"))
+//        .locations("-122.75,36.8,-121.75,37.8")
+        .listen()
+        .flatten_stream()
+        .for_each(|json| {
+            println!("{}", json);
+            Ok(())
+        })
+        .map_err(|e| println!("error: {}", e));
+
+    rt::run(future);
 }
