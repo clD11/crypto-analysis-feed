@@ -5,8 +5,7 @@ extern crate regex;
 extern crate serde_json;
 extern crate serde;
 extern crate base64;
-
-mod top_client;
+extern crate reqwest;
 
 use self::yaml_rust::YamlLoader;
 use self::http::Uri;
@@ -19,8 +18,7 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use twitter_stream::types::FilterLevel;
 use regex::Regex;
-
-use top_client::get_trending_topic;
+use self::reqwest::*;
 
 #[derive(Deserialize)]
 #[serde(untagged)]
@@ -34,6 +32,35 @@ struct Tweet {
     created_at: String,
     id: i64,
     text: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct BearerToken {
+    token_type: String,
+    access_token: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct Trends {
+    trends: Vec<Trend>,
+    as_of: String,
+    created_at: String,
+    locations: Vec<Location>
+}
+
+#[derive(Debug, Deserialize)]
+struct Location {
+    name: String,
+    woeid: i32
+}
+
+#[derive(Debug, Deserialize)]
+struct Trend {
+    name:               String,
+//    url:                String,
+//    promoted_content:   String,
+//    query:              String,
+//    tweet_volume:       i32
 }
 
 struct TwitterConfig {
@@ -83,54 +110,75 @@ impl TwitterConfig {
 fn main() {
     let config_resource = String::from("config.yaml");
     let config = TwitterConfig::build(&config_resource);
+    let trending = find_trending(&config);
 
-//    let token = Token::new(config.oauth.consumer_key, config.oauth.consumer_secret,
-//                                    config.oauth.token,config.oauth.token_secret);
+    println!("TRENDING NOW - {}", &trending);
 
-    top_client::get_trending_topic(&config);
-    // obtain token
-    // call trending endpoint
-    // set track
-    // start stream
-    // after one hour start again
+    // TODO wrap in thread then listen to chanel kill after 60 min get trending and restart
+    run_processor(trending, config);
+}
 
-    // GET https://api.twitter.com/1.1/trends/place.json?id=1
+fn run_processor(track_params: String, config: TwitterConfig) {
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open("training_set.txt")
+        .unwrap();
 
-//    let mut counter = 0;
-//
-//    let mut file = OpenOptions::new()
-//        .write(true)
-//        .append(true)
-//        .open("training_set.txt")
-//        .unwrap();
-//
-//    let future = TwitterStreamBuilder::filter(&token)
-//        .track(Some(&config.track[..]))
-//        .language(Some(&config.language[..]))
-//        .filter_level(Some(FilterLevel::None))
-//        .listen()
-//        .flatten_stream()
-//        .for_each(move|json| {
-//
-//            let re = Regex::new(r".*promo|AIRDROP|airdrop|give away|free.*").unwrap();
-//
-//            let tweet: Tweet = serde_json::from_str(&json).unwrap();
-//
-//            if !re.is_match(&tweet.text[..]) {
-//                let sanitized = tweet.text.replace("\n", "");
-//                println!("{} - {}", tweet.created_at, sanitized);
-//
-//                if counter < 100 {
-//                    if let Err(e) = writeln!(file, "{} - {}", tweet.created_at, &sanitized[..]) {
-//                        eprintln!("Couldn't write to file: {}", e);
-//                    }
-//                    counter += 1;
-//                }
-//                println!("{}", counter);
-//            }
-//            Ok(())
-//        })
-//        .map_err(|e| println!("error: {}", e));
-//
-//    rt::run(future);
+    let token = Token::new(config.oauth.consumer_key, config.oauth.consumer_secret,
+                           config.oauth.token,config.oauth.token_secret);
+
+    let future = TwitterStreamBuilder::filter(&token)
+            .track(Some(&track_params[..]))
+            .language(Some(&config.language[..]))
+            .filter_level(Some(FilterLevel::None))
+            .listen()
+            .flatten_stream()
+            .for_each(move|json| {
+
+                let re = Regex::new(r".*promo|AIRDROP|airdrop|give away|free.*").unwrap();
+
+                let tweet: Tweet = serde_json::from_str(&json).unwrap();
+
+                if !re.is_match(&tweet.text[..]) {
+                    let sanitized = tweet.text.replace("\n", "");
+                    println!("{} - {}", tweet.created_at, sanitized);
+
+                    if let Err(e) = writeln!(file, "{} - {}", tweet.created_at, &sanitized[..]) {
+                        eprintln!("Couldn't write to file: {}", e);
+                    }
+                }
+                Ok(())
+            })
+            .map_err(|e| println!("error: {}", e));
+
+    rt::run(future);
+}
+
+fn find_trending(twitter_config: &TwitterConfig) -> String {
+
+    // TODO Create as static so only retrieve once
+    let client = reqwest::Client::new();
+    let mut res = client.post("https://api.twitter.com/oauth2/token")
+        .basic_auth(&twitter_config.oauth.consumer_key, Some(&twitter_config.oauth.consumer_secret))
+        .header(reqwest::header::CONTENT_TYPE, reqwest::header::HeaderValue::from_static("application/x-www-form-urlencoded;charset=UTF-8"))
+        .body("grant_type=client_credentials")
+        .send().unwrap();
+    let content: BearerToken = res.json().unwrap();
+    res.error_for_status().unwrap();
+
+    // TODO Move into own fn
+    res = client.get("https://api.twitter.com/1.1/trends/place.json?id=1")
+        .bearer_auth(&content.access_token)
+        .send().unwrap();
+
+    let all_trends: Vec<Trends> = res.json().unwrap();
+    // just get the first one for now
+    all_trends[0].trends[0].name.clone()
+
+//    for i in 0..all_trends.len() {
+//        for j in 0..all_trends[i].trends.len() {
+//            println!("{}", all_trends[i].trends[j].name);
+//        }
+//    }
 }
